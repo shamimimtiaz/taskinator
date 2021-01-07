@@ -6,15 +6,24 @@ var taskFormHandler = function (event) {
     var taskNameInput = document.querySelector("input[name='task-name']").value;  //we use square brackets [ ] in a selector, we're trying to select an HTML element(input) by one of its (name) attributes set to a value of "task-name"
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
 
-  // package up data as an object
-
+  // check if input values are empty strings
+  //When we use the syntax !taskNameInput, we're checking to see if the taskNameInput variable is empty by asking if it's a falsy value.
+  if (!taskNameInput || !taskTypeInput) {
+    alert("You need to feel out the Task Form!");
+    return false;
+  }
+  
+  
+    // package up data as an object
   var taskDataObj = {
     name : taskNameInput,
     type : taskTypeInput
   };
    
-  // send it as an argument to createTaskEl
+  //for reset the form
+  formEl.reset();
 
+  // send it as an argument to createTaskEl
     createTaskEl(taskDataObj);
 };
 
