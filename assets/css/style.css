@@ -76,8 +76,8 @@ footer {
 }
 
 .page-content {
-  flex: 1;
-  display: flex;
+  flex: 1; /* flex: 1 declaration to specify that they should share space evenly.*/
+  display: flex;  /* display: flex, allowing it to control the distribution of its content*/
   flex-wrap: wrap;
   justify-content: center;
   margin: 25px auto;
@@ -218,7 +218,7 @@ footer {
 
 @media screen and (max-width: 980px) {
   form .form-group {
-    flex: 1 100%;
+    flex: 1 100%;      /*the <section> elements' flex-basis is set to 100%, which defines a new width that takes up all available space. Thus, the elements become stacked.*/
   }
 
   form .form-group button {
