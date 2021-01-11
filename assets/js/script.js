@@ -5,6 +5,7 @@ var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
 var pageContentEl = document.querySelector("#page-content");
 
+
 var taskFormHandler = function (event) {
     event.preventDefault();
     var taskNameInput = document.querySelector("input[name='task-name']").value;  //we use square brackets [ ] in a selector, we're trying to select an HTML element(input) by one of its (name) attributes set to a value of "task-name"
@@ -49,8 +50,8 @@ var createTaskEl = function (taskDataObj) {
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
 // add task id as a custom attribute (The setAttribute() method can be used to add or update any attribute on an HTML element)
-    listItemEl.setAttribute("data-task-id", taskIdCounter);    //?//
-
+    listItemEl.setAttribute("data-task-id", taskIdCounter);    
+    listItemEl.setAttribute("draggable", "true");
 // create div to hold task info and add to list item
     var taskInfoEl = document.createElement("div");
     taskInfoEl.className = "task-info";
@@ -59,7 +60,7 @@ var createTaskEl = function (taskDataObj) {
     listItemEl.appendChild(taskInfoEl);
 
     // create task actions (buttons and select) for task
-    var taskActionsEl = createTaskActions(taskIdCounter);     //?//
+    var taskActionsEl = createTaskActions(taskIdCounter);     
     listItemEl.appendChild(taskActionsEl);
 // add entire list item to list
     tasksToDoEl.appendChild(listItemEl);
@@ -136,7 +137,7 @@ var taskButtonHandler = function(event) {
     console.log("edit", targetEl);
 // get the element's task id    
 var taskId = targetEl.getAttribute("data-task-id");
-  editTask(taskId);                 //?//
+  editTask(taskId);                 
 // delete button was clicked   
   } else if (targetEl.matches(".delete-btn")) {
     console.log("delete", targetEl);
@@ -193,9 +194,69 @@ formEl.setAttribute("data-task-id", taskId);
 var deleteTask = function (taskId) {
   console.log(taskId);
 // find task list element with taskId value and remove it
-  var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']"); //?//
+  var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']"); 
 taskSelected.remove();
 }
+//we use the setData() and getData() methods to store and retrieve data, including our unique task id from the event, to and from the dataTransfer property on the object.
+var dragTaskHandler = function(event) {
+ var taskId = event.target.getAttribute ("data-task-id");
+event.dataTransfer.setData("text/plain", taskId);   //This expression will store the taskId in the dataTransfer property of the event.Notice how the setData() method receives two arguments: the data's value and format
+
+var getId = event.dataTransfer.getData("text/plain"); //To verify that our dataTransfer property stored the data-task-id attribute, we'll use the getData() method. 
+//console.log("getId:", getId, typeof getId);
+ 
+//console.log("Task ID:", taskId);
+//console.log("event", event);
+ 
+  //console.log("event.target", event.target);
+  //console.log("event.type", event.type);
+  //console.log("event", event);
+
+}
+
+var dropTaskHandler = function (event) {
+  var id = event.dataTransfer.getData("text/plain");
+  var draggableElement = document.querySelector("[data-task-id='" + id + "']");
+  var dropZoneEl = event.target.closest (".task-list"); //verified that the event.target property of the drop event identified the drop zone. closest() method to return the corresponding task list element of the drop zone
+  
+  
+// set status of task based on dropzone id
+var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
+var statusType = dropZoneEl.id;
+
+if (statusType === "tasks-to-do") {
+  statusSelectEl.selectedIndex = 0;
+} 
+else if (statusType === "tasks-in-progress") {
+  statusSelectEl.selectedIndex = 1;
+} 
+else if (statusType === "tasks-completed") {
+  statusSelectEl.selectedIndex = 2;
+
+  dropZoneEl.appendChild(draggableElement);
+}
+
+//console.log(statusSelectEl);
+//console.log(statusType);
+//  console.log(dropZoneEl);
+
+
+//console.log = ("draggableElement");  
+//console.log("Drop Event Target:", event.target, event.transfer, id);
+};
+
+var dropZoneDragHandler = function (event) {
+//console.log("Dragover Event Target:", event.target);
+var taskListEl = event.target.closest(".task-list"); //The .closest() method searches up through the ancestors of the event.target, which is the drop zone. It looks for an element that matches the selector (.task-list, in this case).
+
+if (taskListEl) {
+  event.preventDefault();
+  //console.dir(taskListEl);
+}
+
+};
+
+
 
 //Create a new task
 formEl.addEventListener("submit", taskFormHandler);
@@ -204,6 +265,10 @@ pageContentEl.addEventListener("click", taskButtonHandler);
 // for changing the status
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
 
+// for draging and dropping
+pageContentEl.addEventListener("dragstart", dragTaskHandler);
+pageContentEl.addEventListener("dragover", dropZoneDragHandler); //We'll use the dragover event handler to define the drop zone, use the dragover event handler to define the drop zone, which is where the draggable element can be dropped.
 
-  //listItemEl.textContent = taskNameInput; 
+pageContentEl.addEventListener("drop", dropTaskHandler); //Just like in the dragover event, the drop event's target property contains the receiving element, or the element that is being dropped upon.
+  
   
