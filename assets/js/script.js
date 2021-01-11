@@ -218,7 +218,7 @@ var dropTaskHandler = function (event) {
   var id = event.dataTransfer.getData("text/plain");
   var draggableElement = document.querySelector("[data-task-id='" + id + "']");
   var dropZoneEl = event.target.closest (".task-list"); //verified that the event.target property of the drop event identified the drop zone. closest() method to return the corresponding task list element of the drop zone
-  
+  dropZoneEl.removeAttribute("style"); //This method remove the style attribute that we added in the dragover event.
   
 // set status of task based on dropzone id
 var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
@@ -252,10 +252,16 @@ var taskListEl = event.target.closest(".task-list"); //The .closest() method sea
 if (taskListEl) {
   event.preventDefault();
   //console.dir(taskListEl);
+  taskListEl.setAttribute("style", "background: red (68, 233, 255, 0.7), border-style: dashed;");
 }
 
 };
-
+var dragLeaveHandler = function (event) {
+var taskListEl = event.target.closest(".task-list");
+if (taskListEl) {
+  taskListEl.removeAttribute("style");
+}
+}
 
 
 //Create a new task
@@ -271,4 +277,4 @@ pageContentEl.addEventListener("dragover", dropZoneDragHandler); //We'll use the
 
 pageContentEl.addEventListener("drop", dropTaskHandler); //Just like in the dragover event, the drop event's target property contains the receiving element, or the element that is being dropped upon.
   
-  
+pageContentEl.addEventListener("dragleave", dragLeaveHandler);  
